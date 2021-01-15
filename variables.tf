@@ -103,6 +103,11 @@ variable "vm_default_user" {
   description = "Virtual Machine Default User"
 }
 
+variable "public_key" {
+  type        = string
+  description = "SSH Default Public Key"
+}
+
 variable "tags" {
   type        = map(string)
   description = "Tags To Associate With Your infrastructure"
