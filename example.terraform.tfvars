@@ -1,3 +1,6 @@
+// Create Service Principal via Azure CLI
+// az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/xxxxx-xxxxx-xxxxx-xxxxx-xxxxx
+
 // Authentication - Service Principal
 client_id = ""
 client_secret = ""
