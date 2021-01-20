@@ -38,7 +38,7 @@ variable "address_space" {
   description = "Virtual Network Address Space"
 }
 
-variable "snet_names" {
+variable "snet_name" {
   type        = string
   description = "Subnet Name"
 }
