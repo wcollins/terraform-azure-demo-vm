@@ -38,12 +38,12 @@ variable "address_space" {
   description = "Virtual Network Address Space"
 }
 
-variable "snet_name" {
+variable "snet_names" {
   type        = string
   description = "Subnet Name"
 }
 
-variable "address_prefixes" {
+variable "snet_prefixes" {
   type        = string
   description = "Subnet Prefixes"
 }
