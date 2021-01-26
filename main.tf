@@ -8,32 +8,32 @@ provider "azurerm" {
 
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
-  tags     = var.tags
+data "azurerm_resource_group" "rg" {
+  name = var.resource_group_name
+  // location = var.location
+  // tags     = var.tags
 }
 
 resource "azurerm_virtual_network" "vnet" {
   name                = var.vnet_name
   address_space       = [var.address_space]
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  tags                = azurerm_resource_group.rg.tags
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  tags                = data.azurerm_resource_group.rg.tags
 }
 
 resource "azurerm_subnet" "snet" {
   name                 = var.snet_name
   address_prefixes     = [var.snet_prefixes]
-  resource_group_name  = azurerm_resource_group.rg.name
+  resource_group_name  = data.azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
 }
 
 resource "azurerm_network_security_group" "nsg" {
   name                = var.nsg_name
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  tags                = azurerm_resource_group.rg.tags
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  tags                = data.azurerm_resource_group.rg.tags
 
   security_rule {
     name                       = "SSH"
@@ -52,15 +52,15 @@ resource "azurerm_network_security_group" "nsg" {
 resource "azurerm_public_ip" "pip" {
   name                         = var.pip_name
   allocation_method            = var.allocation_method
-  resource_group_name          = azurerm_resource_group.rg.name
-  location                     = azurerm_resource_group.rg.location
-  tags                         = azurerm_resource_group.rg.tags
+  resource_group_name          = data.azurerm_resource_group.rg.name
+  location                     = data.azurerm_resource_group.rg.location
+  tags                         = data.azurerm_resource_group.rg.tags
 }
 
 resource "random_id" "id" {
 
   keepers = {
-    resource_group = azurerm_resource_group.rg.name
+    resource_group = data.azurerm_resource_group.rg.name
   }
 
   byte_length = 8
@@ -70,16 +70,16 @@ resource "azurerm_storage_account" "storage" {
   name                     = random_id.id.hex
   account_tier             = var.account_tier
   account_replication_type = var.account_replication_type
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  tags                     = azurerm_resource_group.rg.tags
+  resource_group_name      = data.azurerm_resource_group.rg.name
+  location                 = data.azurerm_resource_group.rg.location
+  tags                     = data.azurerm_resource_group.rg.tags
 }
 
 resource "azurerm_network_interface" "nic" {
   name                = var.interface_name
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  tags                = azurerm_resource_group.rg.tags
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  tags                = data.azurerm_resource_group.rg.tags
 
   ip_configuration {
     name                          = "internal"
@@ -92,16 +92,16 @@ resource "azurerm_network_interface" "nic" {
 
 data "azurerm_image" "packer_image" {
   name                = var.managed_disk_name
-  resource_group_name = var.managed_disk_rg
+  resource_group_name = data.azurerm_resource_group.rg.name
 }
 
 resource "azurerm_linux_virtual_machine" "linux_vm" {
   name                  = var.vm_name
   size                  = var.vm_size
   admin_username        = var.vm_default_user
-  resource_group_name   = azurerm_resource_group.rg.name
-  location              = azurerm_resource_group.rg.location
-  tags                  = azurerm_resource_group.rg.tags
+  resource_group_name   = data.azurerm_resource_group.rg.name
+  location              = data.azurerm_resource_group.rg.location
+  tags                  = data.azurerm_resource_group.rg.tags
 
   network_interface_ids = [
     azurerm_network_interface.nic.id,
